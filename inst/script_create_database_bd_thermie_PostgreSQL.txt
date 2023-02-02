@@ -1,0 +1,150 @@
+--  Création BDD bd_thermie dans PostgreSQL 
+
+
+CREATE DATABASE bd_thermie WITH ENCODING = 'UTF8';
+CREATE EXTENSION postgis;
+	
+-- Création schema user_1	
+	
+	
+	CREATE SCHEMA user_1
+    AUTHORIZATION user_1;
+
+--  Création table stations dans PostgreSQL 
+
+-- Table: user_1.stations
+
+-- DROP TABLE IF EXISTS user_1.stations;
+
+CREATE TABLE IF NOT EXISTS user_1.stations
+(
+    id_station character varying(254) UNIQUE NOT NULL COLLATE pg_catalog."default",
+    geom geometry(Point,2154) NOT NULL,
+    libelle_station character varying(254) NOT NULL COLLATE pg_catalog."default",
+    bassin character varying(254) NOT NULL COLLATE pg_catalog."default",
+    cours_eau character varying(254) NOT NULL COLLATE pg_catalog."default",
+    commune character varying(254) NOT NULL COLLATE pg_catalog."default",
+    departemen bigint NOT NULL,
+    x_l93 numeric NOT NULL,
+    y_l93 numeric NOT NULL,
+    berge character varying(254) COLLATE pg_catalog."default",
+    localisati character varying(254) COLLATE pg_catalog."default",
+    securite character varying(254) COLLATE pg_catalog."default",
+    contrainte character varying(254) COLLATE pg_catalog."default",
+    interet character varying(254) COLLATE pg_catalog."default",
+    reference bigint,
+    proprio character varying(254) COLLATE pg_catalog."default",
+    mise_en_fct date NOT NULL,
+	mise_arret date,
+    remarques character varying(254) COLLATE pg_catalog."default",
+	operateur character varying(254) NOT NULL COLLATE pg_catalog."default",
+    
+    CONSTRAINT stations_pkey PRIMARY KEY (id_station)
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS user_1.stations
+    OWNER to user_1;
+-- Index: sidx_stations_geom
+
+-- DROP INDEX IF EXISTS user_1.sidx_stations_geom;
+
+CREATE INDEX IF NOT EXISTS sidx_stations_geom
+    ON user_1.stations USING gist
+    (geom)
+    TABLESPACE pg_default;
+	
+
+-- Creation table température
+
+CREATE TABLE IF NOT EXISTS user_1.temperature (
+	t_station      character varying(254) REFERENCES stations(id_station) NOT NULL,
+	date_heure timestamp(0) without time zone NOT NULL,
+	temperature real NOT NULL,
+	UNIQUE (t_station,date_heure),
+	PRIMARY KEY(t_station,date_heure)
+)WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS user_1.temperature
+    OWNER to user_1;
+
+-- Creation table relève station
+
+CREATE TABLE IF NOT EXISTS user_1.releve_sonde (
+r_station character varying(254) REFERENCES stations(id_station) NOT NULL,
+r_date date NOT NULL,
+r_operateur character varying(254) NOT NULL,
+UNIQUE (r_station,r_date),
+PRIMARY KEY (r_station,r_date)
+)WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS user_1.releve_sonde
+    OWNER to user_1;
+
+CREATE TABLE IF NOT EXISTS user_1.resultats_analyse (
+ra_station  character varying(254) REFERENCES stations(id_station) NOT NULL ,
+dd_periode date NOT NULL,
+df_periode date NOT NULL,
+duree bigint NOT NULL,
+ti_min real NOT NULL,
+ti_max real NOT NULL,
+ati real NOT NULL,
+ajmax_ti real NOT NULL,
+d_ajmax_ti date NOT NULL,
+tmj_min real NOT NULL,
+tmj_max real NOT NULL,
+atmj real NOT NULL,
+d_tmj_max date NOT NULL,
+tmp real NOT NULL,
+tm30j_max real NOT NULL,
+dd_tm30j_max date NOT NULL,
+df_tm30j_max date NOT NULL,
+nbj_tmj_4_19 bigint NOT NULL,
+percent_j_tmj_4_19 real NOT NULL,
+dd_tmj_4 date,
+df_tmj_4 date,
+percent_j_tmj_inf4 real NOT NULL,
+percent_j_tmj_sup19 real NOT NULL,
+nb_ti_sup19 bigint NOT NULL,
+nb_sq_ti_sup19 bigint NOT NULL,
+nbmax_ti_csf_sup19 bigint NOT NULL,
+nb_ti_sup25 bigint NOT NULL,
+nb_sq_ti_sup25 bigint NOT NULL,
+nbmax_ti_csf_sup25 bigint NOT NULL,
+nb_ti_sup15 bigint NOT NULL,
+nb_sq_ti_sup15 bigint NOT NULL,
+nbmax_ti_csf_sup15 bigint NOT NULL,
+d50_ponte date NOT NULL,
+nbj_inc bigint NOT NULL,
+d50_ecl date NOT NULL,
+nbj_rsp bigint NOT NULL,
+nbj_pel bigint NOT NULL,
+d50_emg date NOT NULL,
+nb_ti_sup15_pel bigint NOT NULL,
+nb_sq_ti_sup15_pel bigint NOT NULL,
+nbmax_ti_csf_sup15_pel bigint NOT NULL,
+nb_ti_inf1_5_pel bigint NOT NULL,
+nb_sq_ti_inf1_5_pel bigint NOT NULL,
+nbmax_ti_csf_inf1_5_pel bigint NOT NULL,
+
+PRIMARY KEY (ra_station,dd_periode,duree),
+UNIQUE(ra_station,dd_periode,duree),
+CONSTRAINT date_ponte_inf_date_debut CHECK (d50_ponte>=dd_periode),
+CONSTRAINT date_ponte_sup_date_fin CHECK (d50_ponte<df_periode),
+CONSTRAINT periode_sup_365 CHECK (duree<=365)
+)WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS user_1.resultats_analyse
+    OWNER to user_1;
