@@ -13,5 +13,5 @@ spsComps:::spsOption("traceback", TRUE)
 
 
 # Run the application
-run_app()
+thermishiny()
 
