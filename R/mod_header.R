@@ -52,7 +52,7 @@ mod_header_ui <- function(id){
                       passwordInput(
                         inputId = ns("pass_login"), 
                         label= "mot de passe", 
-                        value = "password", 
+                        value = "", 
                         placeholder = "Mot de passe utilise pour l'acc\u00e8s a la base de donn\u00e9es."
                       ),
                       actionBttn(
@@ -100,10 +100,7 @@ mod_header_server <- function(id){
                      dbname <- isolate(input$dbname_login)
                      user <- isolate(input$name_login)
                      password <- isolate(input$pass_login)
-                     
-                     
-                     
-                     
+
                    db_connection<-  pool::dbPool(
                                     drv=RPostgres::Postgres(),
                                     dbname = dbname, 
@@ -112,8 +109,8 @@ mod_header_server <- function(id){
                                     user = user,
                                     password = password
                      )
-                     
-                     
+                   validate(need(!is.null(db_connection), "Pas de connexion, vérifiez les paramètres de connexion"))
+                     #browser()
                      if (db_connection$valid == "TRUE") {
                        
                        
