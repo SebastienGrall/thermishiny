@@ -7,6 +7,7 @@
 #' @noRd 
 #' @importFrom utils read.csv2
 #' @importFrom shiny NS tagList 
+#' @importFrom stringr str_c
 mod_analysis_from_file_ui <- function(id){
   ns <- NS(id)
   spsDepend("toastr")
@@ -108,7 +109,7 @@ mod_analysis_from_file_server <- function(id,DD){
         validate(need(ncol(df3)==3,"le s\u00e9parateur de colonnes ne doit pas \u00eatre le bon"))
         
         df3[,2]<-as.POSIXct(df3[,2],format="%d/%m/%Y",tz="UTC")
-        df3[,1]<-as.POSIXct(str_c(df3[,2],df3[,1],sep = " "),format="%Y-%m-%d %H:%M",tz="UTC")
+        df3[,1]<-as.POSIXct(stringr::str_c(df3[,2],df3[,1],sep = " "),format="%Y-%m-%d %H:%M",tz="UTC")
         
         df3[,2]<-df3[,3]
         
