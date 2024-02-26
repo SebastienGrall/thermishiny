@@ -96,7 +96,7 @@ mod_import_data_temp_server <- function(id,DD,mytab){
       #if(input$ncoldate=='2col')
       else{
         df<-read.csv2(inFile$datapath, header=input$header, sep=input$sep, dec=input$dec)
-        validate(need(ncol(df)==2,"le s\u00e9parateur de colonnes ne doit pas \u00eatre le bon"))
+        validate(need(ncol(df)==3,"le s\u00e9parateur de colonnes ne doit pas \u00eatre le bon"))
         df[,2]<-as.POSIXct(df[,2],format="%d/%m/%Y",tz="UTC")
         df[,1]<-as.POSIXct(stringr::str_c(df[,2],df[,1],sep = " "),format="%Y-%m-%d %H:%M",tz="UTC")
         

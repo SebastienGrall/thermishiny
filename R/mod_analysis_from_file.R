@@ -105,7 +105,7 @@ mod_analysis_from_file_server <- function(id,DD){
       
       else{
         df3<-read.csv2(inFile3$datapath, header=input$header3, sep=input$sep3, dec=input$dec3)
-        validate(need(ncol(df3)==2,"le s\u00e9parateur de colonnes ne doit pas \u00eatre le bon"))
+        validate(need(ncol(df3)==3,"le s\u00e9parateur de colonnes ne doit pas \u00eatre le bon"))
         
         df3[,2]<-as.POSIXct(df3[,2],format="%d/%m/%Y",tz="UTC")
         df3[,1]<-as.POSIXct(str_c(df3[,2],df3[,1],sep = " "),format="%Y-%m-%d %H:%M",tz="UTC")

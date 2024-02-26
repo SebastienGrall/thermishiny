@@ -294,7 +294,7 @@ fncondembryolarv<-function(data,date_ponte){
   Tmj<-dplyr::summarise(dplyr::group_by(data,date),mean=mean(temperature)) %>%
     as.data.frame()
   
-  Tmj<-subset(Tmj,Tmj$date>date_ponte)
+  Tmj<-subset(Tmj,Tmj$date>=date_ponte)
   
   Tmj$log10D2<-(-13.9306*log10(Tmj$mean+80))+28.8392
   Tmj$D2<-10^Tmj$log10D2
